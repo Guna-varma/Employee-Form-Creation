@@ -1,0 +1,65 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Employee Details Form</title>
+    <script>
+        function submitForm() {
+            var employeeData = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                bankName: document.getElementById('bankName').value,
+                accountNumber: document.getElementById('accountNumber').value,
+                degree: document.getElementById('degree').value,
+                university: document.getElementById('university').value,
+                graduationYear: document.getElementById('graduationYear').value
+            };
+            localStorage.setItem('employeeData', JSON.stringify(employeeData));
+            alert('Form submitted successfully!');
+        }
+    </script>
+</head>
+<body>
+    <h1>Employee Details Form</h1>
+    <form>
+        <h2>Employee Details</h2>
+        <label for="name">Name:</label>
+        <input type="text" id="name" required><br>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" required><br>
+
+        <label for="phone">Phone:</label>
+        <input type="tel" id="phone" required><br>
+
+        <h2>Employee Bank Details</h2>
+        <label for="bankName">Bank Name:</label>
+        <input type="text" id="bankName" required><br>
+
+        <label for="accountNumber">Account Number:</label>
+        <input type="text" id="accountNumber" required><br>
+
+        <h2>Employee Education</h2>
+        <label for="degree">Degree:</label>
+        <input type="text" id="degree" required><br>
+
+        <label for="university">University:</label>
+        <input type="text" id="university" required><br>
+
+        <label for="graduationYear">Graduation Year:</label>
+        <input type="text" id="graduationYear" required><br>
+
+        <br>
+        <button type="button" onclick="submitForm()">Submit</button>
+    </form>
+</body>
+</html>
