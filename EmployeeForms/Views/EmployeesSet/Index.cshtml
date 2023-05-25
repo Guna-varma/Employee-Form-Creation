@@ -1,6 +1,5 @@
 ﻿@model List<EmployeesSet>
 
-
 <div class="card box-shadow border-0 mt-4">
     <div class="card-header bg-secondary bg-gradient ml-0 py-3">
         <div class="row">
@@ -19,14 +18,15 @@
             </div>
 
             <div class="col-6 text-end">
+                @*<a asp-controller="EmployeesSet" asp-action="Create" class="btn btn-primary">*@
+
                 <a asp-controller="EmployeesSet" asp-action="Create" class="btn btn-primary">
                     <i class="bi bi-plus-circle"></i>  New Employee
                 </a>
             </div>
-
         </div>
 
-        <table class="table table-bordered table-striped">
+        <table id="employeesSetTableData" class="table table-bordered table-striped">
             <thead>
                 <tr>
                     <th>S.No</th>
@@ -46,48 +46,15 @@
                     <th>City</th>
                     <th>State</th>
                     <th>Pincode</th>
-                    
+                    <th>Department</th>
+                    <th></th>
+
                 </tr>
             </thead>
-            <tbody>
-                @*@foreach (var obj in Model.OrderBy(u => u.Id))*@
-                @foreach (var (obj, index) in Model.OrderBy(u => u.Id).Select((value, i) => (value, i)))
-                {
-                    <tr>
-                        <td>@(index  + 1)</td>
-                        <td>@obj.FirstName</td>
-                        <td>@obj.LastName</td>
-                        <td>@obj.EmployeeCode</td>
-                        @*<td>@obj.DateOfBirth</td>*@
-                        <td>@obj.Gender</td>
-                        <td>@obj.BloodGroup</td>
-                        <td>@obj.AccountNo</td>
-                        <td>@obj.IFSCCode</td>
-                        <td>@obj.Branch</td>
-                        <td>@obj.BankName</td>
-                        <td>@obj.AccountType</td>
-                        <td>@obj.AddresssLine1</td>
-                        <td>@obj.AddressLine2</td>
-                        <td>@obj.City</td>
-                        <td>@obj.State</td>
-                        <td>@obj.Pincode</td>
-
-                        @*<td>
-                            <div class="w-75 btn-group" role="group">
-                                <a asp-controller="EmployeesSet" asp-action="Edit" asp-route-id="@obj.Id" class="btn btn-primary mx-2">
-                                    <i class="bi bi-pencil-square"></i> Edit
-                                </a>
-
-                                <a asp-controller="EmployeesSet" asp-action="Delete" asp-route-id="@obj.Id" class="btn btn-danger mx-2">
-                                    <i class="bi bi-trash-fill"></i> Delete
-                                </a>
-                            </div>
-                        </td>*@
-                    </tr>
-                }
-            </tbody>
         </table>
     </div>
 </div>
 
-
+@section Scripts{
+    <script src="~/js/employeesSet.js"></script>
+}

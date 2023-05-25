@@ -1,0 +1,163 @@
+﻿@model Department
+
+<div class="card box-shadow border-0 mt-4">
+    <div class="card-header bg-secondary bg-gradient ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-white py-2">Department Details</h2>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="card-body p-4">
+        <form method="post">
+            <div class="border p-4 mt-4">
+
+                <div class="row pb-2">
+                    <h2 class="text-primary">Department Form</h2>
+                    <hr />
+                </div>
+                @*<div asp-validation-summary="All"></div>*@
+
+                <div class="accordion" id="accordionForm">
+
+              <!-- Department Details -->
+              <div class="accordion-item">
+                  <h3 class="accordion-header" id="departmentDetailsHeading">
+                      <button class="accordion-button" style="border-top:2px solid" type="button" data-bs-toggle="collapse" data-bs-target="#departmentDetailsCollapse" aria-expanded="false" aria-controls="departmentDetailsCollapse">
+                          Department Details
+                      </button>
+                  </h3>
+                  <div id="departmentDetailsCollapse" class="accordion-collapse" aria-labelledby="departmentDetailsHeading" data-bs-parent="#accordionForm">
+                      <div class="accordion-body">
+                          <div class="form-floating py-2 col-12">
+                              <input asp-for="DeptCode" class="form-control border-0 shadow" />
+                              <label asp-for="DeptCode" class="ms-2"></label>
+                              <span asp-validation-for="DeptCode" class="text-danger"></span>
+                          </div>
+
+                          <div class="form-floating py-2 col-12">
+                              <input asp-for="DeptName" class="form-control border-0 shadow" />
+                              <label asp-for="DeptName" class="ms-2"></label>
+                              <span asp-validation-for="DeptName" class="text-danger"></span>
+                          </div>
+
+                          <div class="form-floating py-2 col-12">
+                              <input asp-for="DeptLocation" class="form-control border-0 shadow" />
+                              <label asp-for="DeptLocation" class="ms-2"></label>
+                              <span asp-validation-for="DeptLocation" class="text-danger"></span>
+                          </div>
+
+                          <!-- Buttons save and cancel -->
+                          <div class="accordion-footer mt-1">
+                              <button class="btn btn-primary save-form-data" type="button">Save</button>
+                              <button class="btn btn-outline-secondary cancel-form-data" type="button">Cancel</button>
+                          </div>
+
+                      </div>
+
+                  </div>
+              </div>
+
+              <br />
+              <div class="row">
+                  <div class="col-6 col-md-3">
+                      <button type="submit" class="btn btn-primary form-control">Submit</button>
+                  </div>
+
+                  <div class="col-6 col-md-3">
+                      @*<button type="reset" class="btn btn-secondary form-control">Cancel</button>*@
+                      <button type="reset" class="btn btn-outline-danger form-control clear-all-data">Clear Data</button>
+                  </div>
+
+                  <div class="col-6 col-md-3">
+                      <a asp-controller="Department" asp-action="Index" class="btn btn-outline-secondary form-control">
+                          Back to Deparment List
+                      </a>
+                  </div>
+              </div>
+        </form>
+    </div>
+
+    @*<div id="previewArea">
+    <div class="col-6 col-md-3">
+    <button type="button" class="btn btn-outline-dark form-control preview-data">Preview</button>
+    </div>
+    </div>*@
+
+    <br />
+</div>
+
+@section Scripts{
+
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+
+    <script>
+        $(function () {
+            $('.save-form-data').click(function () {
+                var accordionItem = $(this).closest('.accordion-item'); // Get the parent accordion item
+
+                // Find all input fields within the accordion item and retrieve their values
+                var formData = {};
+                accordionItem.find('input, select').each(function () {
+                    var fieldType = $(this).attr('type');
+                    var fieldName = $(this).attr('name');
+                    var fieldValue;
+
+                    if (fieldType === 'checkbox') {
+                        fieldValue = $(this).is(':checked');
+                    } else {
+                        fieldValue = $(this).val();
+                    }
+
+                    formData[fieldName] = fieldValue;
+                });
+
+                // Check if any data is entered in the accordion item
+                var isDataEntered = Object.values(formData).some(function (value) {
+                    return value !== '';
+                });
+
+                if (!isDataEntered) {
+                    alert('No data is present. Please fill in the data.');
+                    return;
+                }
+
+                // Log the form data to the console
+                console.log(formData);
+
+                // Create an inspect form with the form data
+                var inspectForm = '';
+                for (var field in formData) {
+                    inspectForm += field + ': ' + formData[field] + '\n';
+                }
+
+                // Display the inspect form in an alert dialog
+                alert("Data saved successfully! \n \n Saved Data : \n" + inspectForm);
+            });
+
+            $('.cancel-form-data').click(function () {
+                var accordionItem = $(this).closest('.accordion-item'); // Get the parent accordion item
+
+                // Clear all input fields within the accordion item
+                accordionItem.find('input, select').val('');
+            });
+
+            $('.clear-all-data').click(function () {
+                var accordionItems = $('.accordion-item');
+
+                // Clear all input fields within each accordion item
+                accordionItems.each(function () {
+                    $(this).find('input, select').val('');
+                });
+            });
+        });
+    </script>
+}

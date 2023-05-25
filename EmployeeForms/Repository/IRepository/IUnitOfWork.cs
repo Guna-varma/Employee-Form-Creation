@@ -9,11 +9,7 @@ namespace EmployeeForms.Repository.IRepository
 {
     public interface IUnitOfWork
     {
-        IBankDetailsRepository bankDetails { get; }
-
-        IEmployeeDetailsRepository employeeDetails { get; }
-        IAddressRepository addressDetails { get; }
-
+        IDepartmentRepository departmentSet { get; }
         IEmployeesSetRepository employeesSet { get; }
 
         void Save();

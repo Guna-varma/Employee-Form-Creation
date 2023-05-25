@@ -1,6 +1,8 @@
 ﻿using EmployeeForms.Models;
 using EmployeeForms.Repository.IRepository;
+using EmployeeForms.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace EmployeeForms.Controllers
 {
@@ -13,89 +15,122 @@ namespace EmployeeForms.Controllers
         {
             repo = categoryRepository;
         }
-
+        
         public IActionResult Index()
         {
-            List<EmployeesSet> employeesSets = repo.employeesSet.GetAll().ToList();
+            List<EmployeesSet> employeesSets = repo.employeesSet.GetAll(includeProperties:"Department").ToList();
             return View(employeesSets);
+        }
+
+        [HttpGet]
+        public IActionResult GetAll()
+        {
+            List<EmployeesSet> employeesList = repo.employeesSet.GetAll(includeProperties: "Department").ToList();
+
+            return Json(new { data = employeesList });
         }
 
         public IActionResult Create()
         {
-            return View();
+            EmpSetDetailsVm empVm = new()
+            {
+                DeptList = repo.departmentSet.GetAll().Select(u => new SelectListItem
+                {
+                    Text = u.DeptName,
+                    Value = u.Id.ToString()
+                }),
+                EmployeesSet = new EmployeesSet()
+            };
+            return View(empVm);
         }
 
         [HttpPost]
-        public IActionResult Create(EmployeesSet employeesSet)
-        { 
-
+        public IActionResult Create(EmpSetDetailsVm empVm)
+        {
             if (ModelState.IsValid) //validations
             {
-                repo.employeesSet.Add(employeesSet); // add category 
+                repo.employeesSet.Add(empVm.EmployeesSet); // add emp 
                 repo.Save(); //save
                 TempData["success"] = "Form Created Successfully!";
                 return RedirectToAction("Index"); // add the data into db
             }
-            return View();
-
+            else
+            {
+                empVm.DeptList = repo.departmentSet.GetAll().Select(u => new SelectListItem
+                {
+                    Text = u.DeptName,
+                    Value = u.Id.ToString()
+                });
+                return View(empVm);
+            }
         }
 
         public IActionResult Edit(int? id)
         {
-            if (id == null | id <= 0)
+            EmpSetDetailsVm empSetEditVm = new()
             {
-                return NotFound("No Id is found");
-            }
-            EmployeesSet employeesFromDb = repo.employeesSet.Get(u => u.Id == id);
-            if (employeesFromDb == null)
-            {
-                return NotFound("id: " + id + ", is not found!");
-            }
-            return View(employeesFromDb);
+                DeptList = repo.departmentSet.GetAll().Select(u => new SelectListItem
+                {
+                    Text = u.DeptName,
+                    Value = u.Id.ToString()
+                }),
+                EmployeesSet = new EmployeesSet()
+            };
+
+            empSetEditVm.EmployeesSet = repo.employeesSet.Get(u => u.Id == id);
+            return View(empSetEditVm);
         }
 
         [HttpPost]
-        public IActionResult Edit(EmployeesSet employeesSet)
+        public IActionResult Edit(EmpSetDetailsVm empEditVm)
         {
             if (ModelState.IsValid) //validations
             {
-                repo.employeesSet.Update(employeesSet);// add category 
+                repo.employeesSet.Update(empEditVm.EmployeesSet); // edit Employee 
                 repo.Save(); //save
                 TempData["success"] = "Form Updated Successfully!";
-
                 return RedirectToAction("Index"); // add the data into db
             }
-            return View();
+            else
+            {
+                empEditVm.DeptList = repo.departmentSet.GetAll().Select(u => new SelectListItem
+                {
+                    Text = u.DeptName,
+                    Value = u.Id.ToString()
+                });
+                return View(empEditVm);
+            }
         }
 
+        //public IActionResult Delete(int? id)
+        //{
+        //    if (id == null | id <= 0)
+        //    {
+        //        return NotFound("No Id is found");
+        //    }
+        //    EmployeesSet empFromDb = repo.employeesSet.Get(u => u.Id == id);
+        //    if (empFromDb == null)
+        //    {
+        //        return NotFound("id: " + id + ", is not found!");
+        //    }
+        //    return View(empFromDb);
+        //}
+
+        [HttpDelete]
         public IActionResult Delete(int? id)
         {
-            if (id == null | id <= 0)
+            var employeeToBeDeleted = repo.employeesSet.Get(u => u.Id == id);
+            if (employeeToBeDeleted == null)
             {
-                return NotFound("No Id is found");
+                return Json(new { success = false, message = "Error While Deleting" });
             }
-            EmployeesSet empFromDb = repo.employeesSet.Get(u => u.Id == id);
-            if (empFromDb == null)
-            {
-                return NotFound("id: " + id + ", is not found!");
-            }
-            return View(empFromDb);
+
+            repo.employeesSet.Remove(employeeToBeDeleted);
+            repo.Save();
+
+            return Json(new { success = true, message = "Deleted Successfully!" });
         }
 
-        [HttpPost, ActionName("Delete")]
-        public IActionResult DeletePost(int? id)
-        {
-            EmployeesSet? obj = repo.employeesSet.Get(u => u.Id == id);
-            if (obj == null)
-            {
-                return NotFound("Id:" + id + ", is not Found");
-            }
-            repo.employeesSet.Remove(obj);
-            repo.Save();  //save
-            TempData["success"] = "form Deleted Successfully!";
-
-            return RedirectToAction("Index");
-        }
     }
 }
 

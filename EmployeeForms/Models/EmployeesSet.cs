@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EmployeeForms.Models
 {
@@ -62,7 +64,6 @@ namespace EmployeeForms.Models
         [MaxLength(30)]
         [DisplayName("IFSC Code")]
         [RegularExpression(@"^[A-Za-z0-9]+$", ErrorMessage = "No Spaces are allowed.")]
-
         public string IFSCCode { get; set; }
 
         [Required]
@@ -109,5 +110,12 @@ namespace EmployeeForms.Models
         [RegularExpression("^[0-9]{6}$", ErrorMessage = "Pincode must be a 6-digit number")]
         [DisplayName("Pincode")]
         public string Pincode { get; set; }
+
+        [Required]
+        public int DepartmentId { get; set; }
+
+        [ForeignKey("DepartmentId")]
+        [ValidateNever]
+        public Department Department { get; set; }
     }
 }

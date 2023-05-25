@@ -11,10 +11,14 @@
 
     <div class="card-body p-4">
         <form method="post">
+
+            <input asp-for="EmployeesSet.Id" hidden />
+
+
             <div class="border p-4 mt-4">
 
                 <div class="row pb-2">
-                    <h2 class="text-primary">Employees Application Form</h2>
+                    <h2 class="text-primary">Edit Application Form</h2>
                     <hr />
                 </div>
                 @*<div asp-validation-summary="All"></div>*@
@@ -28,7 +32,7 @@
                                 Personal Details
                             </button>
                         </h3>
-                        <div id="personalDetailsCollapse" class="accordion-collapse collapse show" aria-labelledby="personalDetailsHeading" data-bs-parent="#accordionForm">
+                        <div id="personalDetailsCollapse" class="accordion-collapse" aria-labelledby="personalDetailsHeading" data-bs-parent="#accordionForm">
                             <div class="accordion-body">
                                 <div class="form-floating py-2 col-12">
                                     <input asp-for="EmployeesSet.FirstName" class="form-control border-0 shadow" />
@@ -47,6 +51,12 @@
                                     <label asp-for="EmployeesSet.EmployeeCode" class="ms-2"></label>
                                     <span asp-validation-for="EmployeesSet.EmployeeCode" class="text-danger"></span>
                                 </div>
+
+                                @*<div class="form-floating py-2 col-12">
+                                <input asp-for="DateOfBirth" class="form-control border-0 shadow" type="date" />
+                                <label asp-for="DateOfBirth" class="form-label ms-2">Date of Birth</label>
+                                <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+                                </div>*@
 
                                 <div class="form-floating py-2 col-12">
                                     <select asp-for="EmployeesSet.Gender" class="form-select border-0 shadow">
@@ -96,7 +106,7 @@
                                 Bank Details
                             </button>
                         </h3>
-                        <div id="bankDetailsCollapse" class="accordion-collapse collapse show" aria-labelledby="bankDetailsHeading" data-bs-parent="#accordionForm">
+                        <div id="bankDetailsCollapse" class="accordion-collapse" aria-labelledby="bankDetailsHeading" data-bs-parent="#accordionForm">
                             <div class="accordion-body">
                                 <div class="form-floating py-2 col-12">
                                     <input asp-for="EmployeesSet.AccountNo" class="form-control border-0 shadow" />
@@ -154,7 +164,7 @@
                             Address Details
                         </button>
                     </h3>
-                    <div id="addressDetailsCollapse" class="accordion-collapse collapse show" aria-labelledby="addressDetailsHeading" data-bs-parent="#accordionForm">
+                    <div id="addressDetailsCollapse" class="accordion-collapse" aria-labelledby="addressDetailsHeading" data-bs-parent="#accordionForm">
                         <div class="accordion-body">
                             <div class="form-floating py-2 col-12">
                                 <input asp-for="EmployeesSet.AddresssLine1" class="form-control border-0 shadow" />
@@ -195,9 +205,9 @@
                     </div>
                 </div>
 
-                <br/>
+                <br />
 
-                <!-- Select a department -->
+                <!-- Select Dept -->
                 <div class="accordion-item">
                     <h3 class="accordion-header" id="departmentHeading">
                         <button class="accordion-button" style="border-top:2px solid" type="button" data-bs-toggle="collapse" data-bs-target="#departmentCollapse" aria-expanded="true" aria-controls="departmentCollapse">
@@ -216,8 +226,8 @@
 
                             @*<!-- Buttons save and cancel -->
                             <div class="accordion-footer mt-1" style="margin-right:1cm">
-                                <button class="btn btn-primary save-form-data" type="button">Save</button>
-                                <button class="btn btn-outline-secondary cancel-form-data" type="button">Cancel</button>
+                            <button class="btn btn-primary save-form-data" type="button">Save</button>
+                            <button class="btn btn-outline-secondary cancel-form-data" type="button">Cancel</button>
                             </div>*@
                         </div>
                     </div>
@@ -228,17 +238,16 @@
             <br />
             <div class="row">
                 <div class="col-6 col-md-3">
-                    <button type="submit" class="btn btn-primary form-control">Submit</button>
+                    <button type="submit" class="btn btn-primary form-control">Update</button>
                 </div>
 
-                <div class="col-6 col-md-3">
-                    @*<button type="reset" class="btn btn-secondary form-control">Cancel</button>*@
+                @*<div class="col-6 col-md-3">
                     <button type="reset" class="btn btn-outline-danger form-control clear-all-data">Clear Data</button>
-                </div>
+                </div>*@
 
                 <div class="col-6 col-md-3">
                     <a asp-controller="EmployeesSet" asp-action="Index" class="btn btn-outline-secondary form-control">
-                        Back to List
+                        Back
                     </a>
                 </div>
 
@@ -266,84 +275,6 @@
     }
 
     <script>
-        $(function () {
-            $('.save-form-data').click(function () {
-                var accordionItem = $(this).closest('.accordion-item');
-                var formData = {};
-                var isAccordionValid = true; // Flag to track if the accordion is valid
-
-                // Validate the current accordion
-                accordionItem.find('input, select').each(function () {
-                    var fieldType = $(this).attr('type');
-                    var fieldName = $(this).attr('name');
-                    var fieldValue;
-
-                    if (fieldType === 'checkbox') {
-                        fieldValue = $(this).is(':checked');
-                    } else {
-                        fieldValue = $(this).val();
-                    }
-
-                    if (!fieldValue) {
-                        isAccordionValid = false;
-                        return false; // Exit the loop if a field is empty
-                    }
-
-                    formData[fieldName] = fieldValue;
-                });
-
-                // If the current accordion is not valid, display an error message
-                if (!isAccordionValid) {
-                    alert('Please fill in all fields in the current details before proceeding.');
-                    return;
-                }
-
-                // Save the form data to local storage
-                localStorage.setItem('formData', JSON.stringify(formData));
-
-                // Close the current accordion item
-                accordionItem.find('.accordion-button').attr('aria-expanded', 'false');
-                accordionItem.find('.accordion-collapse').removeClass('show');
-
-                // Enable the next accordion
-                var nextAccordion = accordionItem.next('.accordion-item');
-                if (nextAccordion.length > 0) {
-                    nextAccordion.find('.accordion-button').attr('disabled', false).removeClass('collapsed');
-                }
-
-                // Display the inspect form in an alert dialog
-                alert("Data saved successfully! \n \n Saved Data : \n");
-
-                console.log(formData);
-
-                // Create an inspect form with the form data
-                var inspectForm = '';
-                for (var field in formData) {
-                    inspectForm += field + ': ' + formData[field] + '\n';
-                }
-            });
-
-            $('.cancel-form-data').click(function () {
-                var accordionItem = $(this).closest('.accordion-item');
-                accordionItem.find('input, select').val('');
-            });
-
-            $('.clear-all-data').click(function () {
-                var accordionItems = $('.accordion-item');
-
-                // Clear all input fields within each accordion item
-                accordionItems.each(function () {
-                    $(this).find('input, select').val('');
-                });
-            });
-
-        });
-    </script>
-}
-
-    
-    @*<script>
-
         $(function () {
             $('.save-form-data').click(function () {
                 var accordionItem = $(this).closest('.accordion-item'); // Get the parent accordion item
@@ -403,5 +334,5 @@
                 });
             });
         });
-    </script>*@
-    
+    </script>
+}

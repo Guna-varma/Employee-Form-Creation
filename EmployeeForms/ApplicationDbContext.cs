@@ -9,18 +9,15 @@ namespace EmployeeForms
     public class ApplicationDbContext : DbContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
-        public DbSet<EmpDetails> employeeDetailsList { get; set; }
-        public DbSet<EmpBankDetails> bankDetailsList { get; set; }
-        public DbSet<EmpAddress> addressList { get; set; }
 
+        
         public DbSet<EmployeesSet> employeesSetList { get; set; }
+        public DbSet<Department> departmentList { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<EmpDetails>();
-            modelBuilder.Entity<EmpBankDetails>();
-            modelBuilder.Entity<EmpAddress>();
             modelBuilder.Entity<EmployeesSet>();
+            modelBuilder.Entity<Department>();
 
 
         }

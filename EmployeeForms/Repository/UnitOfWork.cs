@@ -11,10 +11,8 @@ namespace EmployeeForms.Repository
     {
         public ApplicationDbContext _db;
 
-        public IEmployeeDetailsRepository employeeDetails { get; set; }
-        public IBankDetailsRepository bankDetails { get; set; }
-        public IAddressRepository addressDetails { get; set; }
         public IEmployeesSetRepository employeesSet { get; set; }
+        public IDepartmentRepository departmentSet { get; set; }
 
         //public IEmployeesSetRepository employeesSet => throw new NotImplementedException();
 
@@ -22,13 +20,8 @@ namespace EmployeeForms.Repository
         {
             _db = db;
 
-            employeeDetails = new EmployeeDetailsRepository(_db);
-
-            bankDetails = new BankDetailsRepository(_db);
-
-            addressDetails = new AddressDetailsRepository(_db);
-
             employeesSet = new EmployeesSetRepository(_db);
+            departmentSet = new DepartmentRepository(_db);
 
         }
 

@@ -20,7 +20,7 @@ namespace EmployeeForms.Repository
 
         public void Update(EmployeesSet employeesSetDetails)
         {
-            throw new NotImplementedException();
+            _db.employeesSetList.Update(employeesSetDetails);
         }
     }
 }
