@@ -8,60 +8,60 @@ namespace EmployeeForms.Controllers
 {
     public class DepartmentController : Controller
     {
-
         private readonly IUnitOfWork repo;
+
         private readonly IWebHostEnvironment env;
 
-        public DepartmentController(IUnitOfWork categoryRepository)
+        public DepartmentController(IUnitOfWork departmentRepository)
         {
-            repo = categoryRepository;
+            repo = departmentRepository;
         }
 
         public IActionResult Upsert(int? id)
         {
             if (id == null || id <= 0)
             {
-                // Upsert as create
-                return Create();
+                // Create
+                return View(new Department());
             }
 
-            Department deptFromDb = repo.departmentSet.Get(u => u.Id == id);
-            if (deptFromDb == null)
+            Department department = repo.departmentSet.Get(u => u.Id == id);
+
+            if (department == null)
             {
-                return NotFound("id: " + id + ", is not found!");
+                return NotFound("Department with id: " + id + " is not found!");
             }
 
-            // Upsert as edit
-            return Edit(deptFromDb);
+            if (department == null && id.HasValue)
+            {
+                return NotFound("id: " + id + " is not found!");
+            }
+
+            return View(department);
         }
 
         [HttpPost]
         public IActionResult Upsert(Department department)
         {
-            if (ModelState.IsValid) // validations
+            if (ModelState.IsValid)
             {
-                if (department.Id <= 0)
+                if (department.Id > 0)
                 {
-                    // Insert
-                    repo.departmentSet.Add(department);
-                    TempData["success"] = "Form Created Successfully!";
-                }
-                else
-                {
-                    // Update
                     repo.departmentSet.Update(department);
                     TempData["success"] = "Form Updated Successfully!";
                 }
+                else
+                {
+                    repo.departmentSet.Add(department);
+                    TempData["success"] = "Form Created Successfully!";
+                }
 
-                repo.Save(); // save
-
-                return RedirectToAction("Index"); // redirect to the index page
+                repo.Save();
+                return RedirectToAction("Index");
             }
 
-            // Invalid model state, return to the upsert view with validation errors
             return View(department);
         }
-
 
 
         public IActionResult Index()
@@ -77,71 +77,6 @@ namespace EmployeeForms.Controllers
 
             return Json(new { data = departmentList });
         }
-
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public IActionResult Create(Department department)
-        {
-
-            if (ModelState.IsValid) //validations
-            {
-                repo.departmentSet.Add(department); // add category 
-                repo.Save(); //save
-                TempData["success"] = "Form Created Successfully!";
-                return RedirectToAction("Index"); // add the data into db
-            }
-            return View();
-
-        }
-
-        public IActionResult Edit(int? id)
-        {
-            if (id == null | id <= 0)
-            {
-                return NotFound("No Id is found");
-            }
-            Department deptFromDb = repo.departmentSet.Get(u => u.Id == id);
-            if (deptFromDb == null)
-            {
-                return NotFound("id: " + id + ", is not found!");
-            }
-            return View(deptFromDb);
-        }
-
-        [HttpPost]
-        public IActionResult Edit(Department department)
-        {
-            if (ModelState.IsValid) //validations
-            {
-                repo.departmentSet.Update(department);// add category 
-                repo.Save(); //save
-                TempData["success"] = "Form Updated Successfully!";
-
-                return RedirectToAction("Index"); // add the data into db
-            }
-            return View();
-        }
-
-
-
-        /*   [HttpPost, ActionName("Delete")]
-           public IActionResult DeletePost(int? id)
-           {
-               Department? obj = repo.departmentSet.Get(u => u.Id == id);
-               if (obj == null)
-               {
-                   return NotFound("Id:" + id + ", is not Found");
-               }
-               repo.departmentSet.Remove(obj);
-               repo.Save();  //save
-               TempData["success"] = "form Deleted Successfully!";
-
-               return RedirectToAction("Index");
-           } */
 
         public IActionResult Remove(int? id)
         {

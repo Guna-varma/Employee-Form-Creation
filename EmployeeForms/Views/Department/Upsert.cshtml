@@ -4,18 +4,22 @@
     <div class="card-header bg-secondary bg-gradient ml-0 py-3">
         <div class="row">
             <div class="col-12 text-center">
-                <h2 class="text-white py-2">Department Details</h2>
+                <h2 class="text-white py-2">@(Model.Id != 0 ? "Update" : "Create") Department</h2>
+                @*<h2 class="text-white py-2">Department Details</h2>*@
             </div>
         </div>
     </div>
 
+
     <div class="card-body p-4">
-        <form method="post">
+        <form method="post" class="row">
             <input asp-for="Id" hidden />
+
             <div class="border p-4 mt-4">
 
                 <div class="row pb-2">
-                    <h2 class="text-primary">Department Form</h2>
+                    <h2 class="text-primary">@(Model.Id != 0 ? "Update" : "Create") Department</h2>
+                    @*<h2 class="text-primary">Department Form</h2>*@
                     <hr />
                 </div>
                 @*<div asp-validation-summary="All"></div>*@
@@ -58,33 +62,44 @@
                             </div>
 
                         </div>
+                
                     </div>
 
                     <br />
-                    <div class="row">
-                        <div class="col-6 col-md-3">
-                            <button type="submit" class="btn btn-primary form-control">Update</button>
-                        </div>
+                        <div class="row pt-2">
+                            <div class="col-6 col-md-3">
+                                @if (Model.Id == 0)
+                                {
+                                    <button type="submit" class="btn btn-primary form-control">Create</button>
+                                }
+                                else
+                                {
+                                    <button type="submit" class="btn btn-primary form-control">Update</button>
+                                }
+                                @*<button type="submit" class="btn btn-primary form-control">Submit</button>*@
+                            </div>
 
-                        <div class="col-6 col-md-3">
-                            @*<button type="reset" class="btn btn-secondary form-control">Cancel</button>*@
-                            <button type="reset" class="btn btn-outline-danger form-control clear-all-data">Clear Data</button>
-                        </div>
+                            <div class="col-6 col-md-3">
+                                @if (Model.Id == 0)
+                                {
+                                    <button type="reset" class="btn btn-outline-danger form-control clear-all-data">Clear Data</button>
+                                }
+                                else
+                                {
+                                    <button type="reset" class="btn btn-outline-danger form-control clear-all-data">No Changes</button>
+                                }
+                            </div>
 
-                        <div class="col-6 col-md-3">
-                            <a asp-controller="Department" asp-action="Index" class="btn btn-outline-secondary form-control">
-                                Back to Deparment List
-                            </a>
+                            <div class="col-6 col-md-3">
+                                <a asp-controller="Department" asp-action="Index" class="btn btn-outline-secondary form-control">
+                                    Back to Deparment List
+                                </a>
+                            </div>
                         </div>
-                    </div>
+                </div>
+            </div>
         </form>
     </div>
-
-    @*<div id="previewArea">
-    <div class="col-6 col-md-3">
-    <button type="button" class="btn btn-outline-dark form-control preview-data">Preview</button>
-    </div>
-    </div>*@
 
     <br />
 </div>
@@ -151,11 +166,11 @@
             });
 
             $('.clear-all-data').click(function () {
-                var accordionItems = $('.accordion-item');
+                var accordionItem = $(this).closest('.accordion-item');
 
-                // Clear all input fields within each accordion item
-                accordionItems.each(function () {
-                    $(this).find('input, select').val('');
+                // Clear all input fields within the accordion item
+                accordionItem.find('input, select').each(function () {
+                    $(this).val('');
                 });
             });
         });
