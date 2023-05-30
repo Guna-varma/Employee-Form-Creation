@@ -111,6 +111,11 @@ namespace EmployeeForms.Models
         [DisplayName("Pincode")]
         public string Pincode { get; set; }
 
+        [ValidateNever]
+        //[Required]
+        [MaxLength(2 * 1024 * 1024, ErrorMessage = "The file size should not exceed 2MB.")]
+        public string ImageURL { get; set; }
+
         [Required]
         public int DepartmentId { get; set; }
 

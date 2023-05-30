@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EmployeeForms.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230524055404_FirstSetup")]
-    partial class FirstSetup
+    [Migration("20230526122417_ImageURL")]
+    partial class ImageURL
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -29,15 +29,18 @@ namespace EmployeeForms.Migrations
 
                     b.Property<string>("DeptCode")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(30)
+                        .HasColumnType("varchar(30)");
 
                     b.Property<string>("DeptLocation")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(30)
+                        .HasColumnType("varchar(30)");
 
                     b.Property<string>("DeptName")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(30)
+                        .HasColumnType("varchar(30)");
 
                     b.HasKey("Id");
 
@@ -107,6 +110,11 @@ namespace EmployeeForms.Migrations
                         .IsRequired()
                         .HasMaxLength(30)
                         .HasColumnType("varchar(30)");
+
+                    b.Property<string>("ImageURL")
+                        .IsRequired()
+                        .HasMaxLength(2097152)
+                        .HasColumnType("longtext");
 
                     b.Property<string>("LastName")
                         .IsRequired()

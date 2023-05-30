@@ -6,7 +6,7 @@ using MySql.EntityFrameworkCore.Metadata;
 namespace EmployeeForms.Migrations
 {
     /// <inheritdoc />
-    public partial class FirstSetup : Migration
+    public partial class ImageURL : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -20,9 +20,9 @@ namespace EmployeeForms.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
-                    DeptCode = table.Column<string>(type: "longtext", nullable: false),
-                    DeptName = table.Column<string>(type: "longtext", nullable: false),
-                    DeptLocation = table.Column<string>(type: "longtext", nullable: false)
+                    DeptCode = table.Column<string>(type: "varchar(30)", maxLength: 30, nullable: false),
+                    DeptName = table.Column<string>(type: "varchar(30)", maxLength: 30, nullable: false),
+                    DeptLocation = table.Column<string>(type: "varchar(30)", maxLength: 30, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -51,6 +51,7 @@ namespace EmployeeForms.Migrations
                     City = table.Column<string>(type: "longtext", nullable: false),
                     State = table.Column<string>(type: "longtext", nullable: false),
                     Pincode = table.Column<string>(type: "longtext", nullable: false),
+                    ImageURL = table.Column<string>(type: "longtext", maxLength: 2097152, nullable: false),
                     DepartmentId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>

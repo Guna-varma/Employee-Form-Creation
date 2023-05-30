@@ -30,6 +30,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=EmployeesSet}/{action=Create}/{id?}");
+    pattern: "{controller=EmployeesSet}/{action=Upsert}/{id?}");
 
 app.Run();

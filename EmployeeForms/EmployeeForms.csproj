@@ -21,6 +21,10 @@
 		<PackageReference Include="MySql.Data" Version="8.0.33" />
 		<PackageReference Include="MySql.EntityFrameworkCore" Version="7.0.2" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="wwwroot\images\employeeDetails\" />
+	</ItemGroup>
 	
 
 </Project>

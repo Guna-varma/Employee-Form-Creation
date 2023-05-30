@@ -10,12 +10,125 @@ namespace EmployeeForms.Controllers
     {
 
         private readonly IUnitOfWork repo;
+        private readonly IWebHostEnvironment env;
 
-        public EmployeesSetController(IUnitOfWork categoryRepository)
+        public EmployeesSetController(IUnitOfWork categoryRepository, IWebHostEnvironment environment)
         {
             repo = categoryRepository;
+            env = environment;
         }
-        
+
+        public IActionResult Upsert(int? id)  // combining of 'Update' and 'Insert'.
+        {
+            EmpSetDetailsVm empDetailsVM = new()
+            {
+                DeptList = repo.departmentSet.GetAll().Select(u => new SelectListItem
+                {
+                    Text = u.DeptName,
+                    Value = u.Id.ToString()
+                }),
+                EmployeesSet = new EmployeesSet()
+            };
+            if (id == null || id == 0)
+            {
+                //create
+                return View(empDetailsVM);
+            }
+            else
+            {
+                //update
+                empDetailsVM.EmployeesSet = repo.employeesSet.Get(u => u.Id == id);
+                return View(empDetailsVM);
+            }
+        }
+
+        [HttpPost]
+        public IActionResult Upsert(EmpSetDetailsVm empDetailsVM, IFormFile? file)
+        {
+            if (ModelState.IsValid) //validations
+            {
+                string wweRootPath = env.WebRootPath;
+                if (file != null)
+                {
+                    // File type validation
+                    string[] allowedExtensions = { ".png", ".jpg", ".jpeg" };
+                    string fileExtension = Path.GetExtension(file.FileName).ToLower();
+                    if (!allowedExtensions.Contains(fileExtension))
+                    {
+                        ModelState.AddModelError("File", "Only .png, .jpeg and .jpg files are allowed.");
+                        empDetailsVM.DeptList = repo.departmentSet.GetAll().Select(u => new SelectListItem
+                        {
+                            Text = u.DeptName,
+                            Value = u.Id.ToString()
+                        });
+                        return View(empDetailsVM);
+                    }
+
+                    // File size validation
+                    long maxFileSize = 2 * 1024 * 1024; // 2MB
+                    if (file.Length > maxFileSize)
+                    {
+                        ModelState.AddModelError("File", "File size must be less than 2MB.");
+                        empDetailsVM.DeptList = repo.departmentSet.GetAll().Select(u => new SelectListItem
+                        {
+                            Text = u.DeptName,
+                            Value = u.Id.ToString()
+                        });
+                        return View(empDetailsVM);
+                    }
+
+                    string fileName = Guid.NewGuid().ToString() + fileExtension;
+
+                    string empFilePath = Path.Combine(wweRootPath, @"images\employeeDetails\");
+
+                    if (!string.IsNullOrEmpty(empDetailsVM.EmployeesSet.ImageURL))
+                    {
+                        //delete old image path
+                        var oldImagePath =
+                            Path.Combine(wweRootPath, empDetailsVM.EmployeesSet.ImageURL.TrimStart('\\'));
+
+                        if (System.IO.File.Exists(oldImagePath))
+                        {
+                            System.IO.File.Delete(oldImagePath);
+                        }
+                    }
+
+                    using (var fileStream = new FileStream(Path.Combine(empFilePath, fileName), FileMode.Create))
+                    {
+                        file.CopyTo(fileStream);
+                    }
+
+                    empDetailsVM.EmployeesSet.ImageURL = @"\images\employeeDetails\" + fileName;
+                }
+
+                if (empDetailsVM.EmployeesSet.Id == null || empDetailsVM.EmployeesSet.Id == 0)
+                {
+                    repo.employeesSet.Add(empDetailsVM.EmployeesSet); // add Product 
+
+                    repo.Save(); //save
+                    TempData["success"] = "Form Created Successfully!";
+                }
+                else
+                {
+                    repo.employeesSet.Update(empDetailsVM.EmployeesSet); // add Product 
+
+                    repo.Save(); //save
+                    TempData["success"] = "Form Updated Successfully!";
+                }
+
+                return RedirectToAction("Index"); // add the data into db
+            }
+            else
+            {
+                empDetailsVM.DeptList = repo.departmentSet.GetAll().Select(u => new SelectListItem
+                {
+                    Text = u.DeptName,
+                    Value = u.Id.ToString()
+                });
+                return View(empDetailsVM);
+            }
+        }
+
         public IActionResult Index()
         {
             List<EmployeesSet> employeesSets = repo.employeesSet.GetAll(includeProperties:"Department").ToList();
@@ -101,20 +214,6 @@ namespace EmployeeForms.Controllers
                 return View(empEditVm);
             }
         }
-
-        //public IActionResult Delete(int? id)
-        //{
-        //    if (id == null | id <= 0)
-        //    {
-        //        return NotFound("No Id is found");
-        //    }
-        //    EmployeesSet empFromDb = repo.employeesSet.Get(u => u.Id == id);
-        //    if (empFromDb == null)
-        //    {
-        //        return NotFound("id: " + id + ", is not found!");
-        //    }
-        //    return View(empFromDb);
-        //}
 
         [HttpDelete]
         public IActionResult Delete(int? id)
